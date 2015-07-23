@@ -6,7 +6,7 @@ LD=$(TOOLCHAIN_PREFIX)ld
 SZ=$(TOOLCHAIN_PREFIX)size
 RM := rm -rf
 
-LIBRARY_NAME = lpc_chip_43xx
+LIBRARY_NAME = lpc_chip_43xx_m4
 SRC_DIR = ./src/
 BUILD_DIR = ./build/
 ILIBS = -I./inc
