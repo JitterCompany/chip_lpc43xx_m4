@@ -6,61 +6,27 @@ LD=$(TOOLCHAIN_PREFIX)ld
 SZ=$(TOOLCHAIN_PREFIX)size
 RM := rm -rf
 
+ENABLE_FPU = 1
+
 LIBRARY_NAME = lpc_chip_43xx_m4
-SRC_DIR = ./src/
-BUILD_DIR = ./build/
+SRC_DIR = src
+BUILD_DIR = build/
 ILIBS = -I./inc
 
 CORE = m4
-GLOBAL_DEFS = -D__LPC43XX__ -DCORE_M4 
-CFLAGS = -O0 -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -std=gnu99 -mcpu=cortex-$(CORE) -mthumb -MMD -MP
+GLOBAL_DEFS = -D__LPC43XX__ -DCORE_M4
+CFLAGS = -O0 -g3 -Wall -c -fmessage-length=100 -fno-builtin -ffunction-sections -fdata-sections -std=gnu99  -MMD -MP -mcpu=cortex-$(CORE) -mthumb -fdiagnostics-color=auto 
 
-OBJS := \
-adc_18xx_43xx.o \
-aes_18xx_43xx.o \
-atimer_18xx_43xx.o \
-ccan_18xx_43xx.o  \
-chip_18xx_43xx.o \
-dac_18xx_43xx.o \
-eeprom_18xx_43xx.o \
-emc_18xx_43xx.o \
-enet_18xx_43xx.o \
-evrt_18xx_43xx.o \
-fpu_init.o \
-gpdma_18xx_43xx.o \
-gpio_18xx_43xx.o \
-gpiogroup_18xx_43xx.o \
-hsadc_18xx_43xx.o \
-i2c_18xx_43xx.o \
-i2cm_18xx_43xx.o \
-i2s_18xx_43xx.o \
-lcd_18xx_43xx.o \
-otp_18xx_43xx.o \
-pinint_18xx_43xx.o \
-pmc_18xx_43xx.o \
-rgu_18xx_43xx.o \
-ring_buffer.o \
-ritimer_18xx_43xx.o \
-rtc_18xx_43xx.o \
-sct_18xx_43xx.o \
-scu_18xx_43xx.o \
-sdif_18xx_43xx.o \
-sdmmc_18xx_43xx.o \
-spi_18xx_43xx.o \
-ssp_18xx_43xx.o \
-sysinit_18xx_43xx.o \
-timer_18xx_43xx.o \
-uart_18xx_43xx.o \
-wwdt_18xx_43xx.o \
-clock_18xx_43xx.o
+ifeq ($(ENABLE_FPU),1)
+	GLOBAL_DEFS += -D__FPU_PRESENT
+	CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+endif
 
-
-OBJS_F = $(addprefix $(BUILD_DIR), $(OBJS))
+SRCS = $(shell find $(SRC_DIR) -name '*.c')
+OBJS_F :=  $(addprefix $(BUILD_DIR), $(SRCS:.c=.o))
 LIBRARY_FILE = "./lib$(LIBRARY_NAME).a"
 
-
 all: post-build
-
 
 .SECONDEXPANSION:
 $(LIBRARY_FILE) : $$(OBJS_F)
@@ -87,8 +53,8 @@ post-build: $(LIBRARY_FILE)
 	-@echo ' '
 	-@echo ' '
 
-$(BUILD_DIR)%.o: $(SRC_DIR)%.c
-	mkdir -p '$(dir $@)'
+$(BUILD_DIR)%.o: %.c
+	@mkdir -p '$(dir $@)'
 	@echo 'Building file: $@ in $(BUILD_DIR) from $<'
 	@echo 'Invoking: MCU C Compiler'
 	@echo flags=$(CFLAGS)
