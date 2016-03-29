@@ -53,11 +53,14 @@ extern "C" {
 
 #define LPC_SCT_BASE              0x40000000
 #define LPC_GPDMA_BASE            0x40002000
+#define LPC_SPIFI_BASE            0x40003000
 #define LPC_SDMMC_BASE            0x40004000
 #define LPC_EMC_BASE              0x40005000
 #define LPC_USB0_BASE             0x40006000
 #define LPC_USB1_BASE             0x40007000
 #define LPC_LCD_BASE              0x40008000
+#define LPC_FMCA_BASE             0x4000C000
+#define LPC_FMCB_BASE             0x4000D000
 #define LPC_ETHERNET_BASE         0x40010000
 #define LPC_ATIMER_BASE           0x40040000
 #define LPC_REGFILE_BASE          0x40041000
@@ -113,15 +116,15 @@ extern "C" {
 #define LPC_LCD                   ((LPC_LCD_T              *) LPC_LCD_BASE)
 #define LPC_ETHERNET              ((LPC_ENET_T             *) LPC_ETHERNET_BASE)
 #define LPC_ATIMER                ((LPC_ATIMER_T           *) LPC_ATIMER_BASE)
-#define LPC_REGFILE               ((LPC_REGFILE_T             *) LPC_REGFILE_BASE)
+#define LPC_REGFILE               ((LPC_REGFILE_T          *) LPC_REGFILE_BASE)
 #define LPC_PMC                   ((LPC_PMC_T              *) LPC_PMC_BASE)
-#define LPC_EVRT                  ((LPC_EVRT_T                *) LPC_EVRT_BASE)
-#define LPC_RTC                   ((LPC_RTC_T                 *) LPC_RTC_BASE)
-#define LPC_CGU                   ((LPC_CGU_T                    *) LPC_CGU_BASE)
-#define LPC_CCU1                  ((LPC_CCU1_T                *) LPC_CCU1_BASE)
-#define LPC_CCU2                  ((LPC_CCU2_T                *) LPC_CCU2_BASE)
-#define LPC_CREG                  ((LPC_CREG_T                   *) LPC_CREG_BASE)
-#define LPC_RGU                   ((LPC_RGU_T                    *) LPC_RGU_BASE)
+#define LPC_EVRT                  ((LPC_EVRT_T             *) LPC_EVRT_BASE)
+#define LPC_RTC                   ((LPC_RTC_T              *) LPC_RTC_BASE)
+#define LPC_CGU                   ((LPC_CGU_T              *) LPC_CGU_BASE)
+#define LPC_CCU1                  ((LPC_CCU1_T             *) LPC_CCU1_BASE)
+#define LPC_CCU2                  ((LPC_CCU2_T             *) LPC_CCU2_BASE)
+#define LPC_CREG                  ((LPC_CREG_T             *) LPC_CREG_BASE)
+#define LPC_RGU                   ((LPC_RGU_T              *) LPC_RGU_BASE)
 #define LPC_WWDT                  ((LPC_WWDT_T             *) LPC_WWDT_BASE)
 #define LPC_USART0                ((LPC_USART_T            *) LPC_USART0_BASE)
 #define LPC_USART2                ((LPC_USART_T            *) LPC_USART2_BASE)
@@ -154,6 +157,9 @@ extern "C" {
 #define LPC_SPI                   ((LPC_SPI_T              *) LPC_SPI_BASE)
 #define LPC_SGPIO                 ((LPC_SGPIO_T            *) LPC_SGPIO_BASE)
 #define LPC_EEPROM                ((LPC_EEPROM_T           *) LPC_EEPROM_BASE)
+#define LPC_FMCA                  ((LPC_FMC_T              *) LPC_FMCA_BASE)
+#define LPC_FMC                   ((LPC_FMC_T            * *) LPC_FMCA_BASE)
+#define LPC_FMCB                  ((LPC_FMC_T              *) LPC_FMCB_BASE)
 #define LPC_ROM_API               ((LPC_ROM_API_T          *) LPC_ROM_API_BASE)
 
 /**
@@ -176,6 +182,7 @@ extern "C" {
 #include "eeprom_18xx_43xx.h"
 #include "emc_18xx_43xx.h"
 #include "enet_18xx_43xx.h"
+#include "fmc_18xx_43xx.h"
 #include "i2c_18xx_43xx.h"
 #include "i2s_18xx_43xx.h"
 #include "gima_18xx_43xx.h"
@@ -190,7 +197,9 @@ extern "C" {
 #include "ritimer_18xx_43xx.h"
 #include "rtc_18xx_43xx.h"
 #include "sct_18xx_43xx.h"
+#include "sct_pwm_18xx_43xx.h"
 #include "sdmmc_18xx_43xx.h"
+#include "sdio_18xx_43xx.h"
 #include "sgpio_18xx_43xx.h"
 #include "spi_18xx_43xx.h"
 #include "ssp_18xx_43xx.h"

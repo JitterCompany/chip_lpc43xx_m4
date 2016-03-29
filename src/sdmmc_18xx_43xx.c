@@ -75,7 +75,7 @@ static int32_t sdmmc_execute_command(LPC_SDMMC_T *pSDMMC, uint32_t cmd, uint32_t
 	}
 
 	while (step) {
-		Chip_SDIF_SetClock(pSDMMC, Chip_Clock_GetRate(CLK_MX_SDIO), g_card_info->card_info.speed);
+		Chip_SDIF_SetClock(pSDMMC, Chip_Clock_GetBaseClocktHz(CLK_BASE_SDIO), g_card_info->card_info.speed);
 
 		/* Clear the interrupts */
 		Chip_SDIF_ClrIntStatus(pSDMMC, 0xFFFFFFFF);
@@ -232,7 +232,7 @@ static void prv_process_csd(LPC_SDMMC_T *pSDMMC)
 		}
 	}
 
-	g_card_info->card_info.device_size = g_card_info->card_info.blocknr << 9;	/* blocknr * 512 */
+	g_card_info->card_info.device_size = (uint64_t) g_card_info->card_info.blocknr << 9;	/* blocknr * 512 */
 }
 
 /* Puts current selected card in trans state */
@@ -481,7 +481,7 @@ uint32_t Chip_SDMMC_Acquire(LPC_SDMMC_T *pSDMMC, mci_card_struct *pcardinfo)
 }
 
 /* Get the device size of SD/MMC card (after enumeration) */
-int32_t Chip_SDMMC_GetDeviceSize(LPC_SDMMC_T *pSDMMC)
+uint64_t Chip_SDMMC_GetDeviceSize(LPC_SDMMC_T *pSDMMC)
 {
 	return g_card_info->card_info.device_size;
 }

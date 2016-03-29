@@ -114,6 +114,38 @@ STATIC INLINE void Chip_CREG_SetFlashAcceleration(uint32_t Hz)
 }
 
 /**
+ * @brief FLASH Access time definitions
+ */
+typedef enum {
+	FLASHTIM_20MHZ_CPU = 0,		/*!< Flash accesses use 1 CPU clocks. Use for up to 20 MHz CPU clock */
+	FLASHTIM_40MHZ_CPU = 1,		/*!< Flash accesses use 2 CPU clocks. Use for up to 40 MHz CPU clock */
+	FLASHTIM_60MHZ_CPU = 2,		/*!< Flash accesses use 3 CPU clocks. Use for up to 60 MHz CPU clock */
+	FLASHTIM_80MHZ_CPU = 3,		/*!< Flash accesses use 4 CPU clocks. Use for up to 80 MHz CPU clock */
+	FLASHTIM_100MHZ_CPU = 4,	/*!< Flash accesses use 5 CPU clocks. Use for up to 100 MHz CPU clock */
+	FLASHTIM_120MHZ_CPU = 5,	/*!< Flash accesses use 6 CPU clocks. Use for up to 120 MHz CPU clock */
+	FLASHTIM_150MHZ_CPU = 6,	/*!< Flash accesses use 7 CPU clocks. Use for up to 150 Mhz CPU clock */
+	FLASHTIM_170MHZ_CPU = 7,		/*!< Flash accesses use 8 CPU clocks. Use for up to 170 MHz CPU clock */
+	FLASHTIM_190MHZ_CPU = 8,		/*!< Flash accesses use 9 CPU clocks. Use for up to 190 MHz CPU clock */
+	FLASHTIM_SAFE_SETTING = 9,		/*!< Flash accesses use 10 CPU clocks. Safe setting for any allowed conditions */
+} CREG_FLASHTIM_T;
+
+/**
+ * @brief	Set FLASH memory access time in clocks
+ * @param	clks	: FLASH access speed rating
+ * @return	Nothing
+ */
+STATIC INLINE void Chip_CREG_SetFLASHAccess(CREG_FLASHTIM_T clks)
+{
+	uint32_t tmpA, tmpB;
+
+	/* Don't alter lower bits */
+	tmpA = LPC_CREG->FLASHCFGA & ~(0xF << 12);
+	LPC_CREG->FLASHCFGA = tmpA | ((uint32_t) clks << 12);
+	tmpB = LPC_CREG->FLASHCFGB & ~(0xF << 12);
+	LPC_CREG->FLASHCFGB = tmpB | ((uint32_t) clks << 12);
+}
+
+/**
  * @brief	Enables the USB0 high-speed PHY on LPC18xx/LPC43xx parts
  * @return	Nothing
  * @note	The USB0 PLL & clock should be configured before calling this function. This function

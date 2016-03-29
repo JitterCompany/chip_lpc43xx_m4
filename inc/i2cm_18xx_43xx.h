@@ -135,6 +135,7 @@ static INLINE void Chip_I2CM_SetDutyCycle(LPC_I2C_T *pI2C, uint16_t sclH, uint16
 
 /**
  * @brief	Set up bus speed for LPC_I2C controller
+ * @param	pI2C	: Pointer to selected I2C peripheral
  * @param	busSpeed	: I2C bus clock rate
  * @return	Nothing
  * @note	Per I2C specification the busSpeed should be
@@ -166,8 +167,8 @@ static INLINE void Chip_I2CM_SendStart(LPC_I2C_T *pI2C)
  */
 static INLINE void Chip_I2CM_ResetControl(LPC_I2C_T *pI2C)
 {
-	/* Reset STA, STO, SI */
-	pI2C->CONCLR = I2C_CON_SI | I2C_CON_STO | I2C_CON_STA | I2C_CON_AA;
+	/* Reset STA, AA and SI. Stop flag should not be cleared as it is a reserved bit */
+	pI2C->CONCLR = I2C_CON_SI | I2C_CON_STA | I2C_CON_AA;
 
 }
 
@@ -275,7 +276,8 @@ static INLINE uint32_t Chip_I2CM_StateChanged(LPC_I2C_T *pI2C)
  */
 static INLINE void Chip_I2CM_ClearSI(LPC_I2C_T *pI2C)
 {
-	pI2C->CONCLR = I2C_CON_SI | I2C_CON_STO | I2C_CON_STA;
+	/* Stop flag should not be cleared as it is a reserved bit */
+	pI2C->CONCLR = I2C_CON_SI | I2C_CON_STA;
 }
 
 /**
@@ -368,7 +370,7 @@ void Chip_I2CM_Xfer(LPC_I2C_T *pI2C, I2CM_XFER_T *xfer);
 
 /**
  * @brief	Transmit and Receive data in master mode
- * @param	id		: I2C peripheral selected (I2C0, I2C1 etc)
+ * @param	pI2C	: Pointer to selected I2C peripheral
  * @param	xfer	: Pointer to a I2CM_XFER_T structure see notes below
  * @return Returns non-zero value on successful completion of transfer.
  * @note

@@ -46,7 +46,6 @@ extern "C" {
  */
 
 #if defined(__ARMCC_VERSION)
-// Kill warning "#pragma push with no matching #pragma pop"
   #pragma diag_suppress 2525
   #pragma push
   #pragma anon_unions
@@ -56,7 +55,6 @@ extern "C" {
 #elif defined(__GNUC__)
 /* anonymous unions are enabled by default */
 #elif defined(__IAR_SYSTEMS_ICC__)
-//  #pragma push // FIXME not usable for IAR
   #pragma language=extended
 #else
   #error Not supported compiler type

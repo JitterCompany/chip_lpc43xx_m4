@@ -86,7 +86,7 @@ STATIC INLINE void Chip_GPIO_WritePortBit(LPC_GPIO_T *pGPIO, uint32_t port, uint
 /**
  * @brief	Set a GPIO pin state via the GPIO byte register
  * @param	pGPIO	: The base of GPIO peripheral on the chip
- * @param port  : GPIO Port number where @a pin is located
+ * @param 	port	: GPIO Port number where @a pin is located
  * @param	pin		: GPIO pin to set
  * @param	setting	: true for high, false for low
  * @return	Nothing
@@ -216,7 +216,7 @@ void Chip_GPIO_SetDir(LPC_GPIO_T *pGPIO, uint8_t portNum, uint32_t bitValue, uin
  * @note	Sets multiple GPIO pins to the output direction, each bit's position that is
  * high sets the corresponding pin number for that bit to an output.
  */
-STATIC INLINE void Chip_GPIO_SetPortDIROutput(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pinMask)
+STATIC INLINE void Chip_GPIO_SetPortDIROutput(LPC_GPIO_T *pGPIO, uint8_t port, uint32_t pinMask)
 {
 	pGPIO->DIR[port] |= pinMask;
 }
@@ -230,7 +230,7 @@ STATIC INLINE void Chip_GPIO_SetPortDIROutput(LPC_GPIO_T *pGPIO, uint8_t port, u
  * @note	Sets multiple GPIO pins to the input direction, each bit's position that is
  * high sets the corresponding pin number for that bit to an input.
  */
-STATIC INLINE void Chip_GPIO_SetPortDIRInput(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pinMask)
+STATIC INLINE void Chip_GPIO_SetPortDIRInput(LPC_GPIO_T *pGPIO, uint8_t port, uint32_t pinMask)
 {
 	pGPIO->DIR[port] &= ~pinMask;
 }
@@ -263,13 +263,14 @@ STATIC INLINE uint32_t Chip_GPIO_GetPortDIR(LPC_GPIO_T *pGPIO, uint8_t port)
 /**
  * @brief	Set GPIO port mask value for GPIO masked read and write
  * @param	pGPIO	: The base of GPIO peripheral on the chip
- * @param	port	: GPIO Port number where @a pin is located
- * @param	mask	: Mask value for read and write
+ * @param	port	: port Number
+ * @param	mask	: Mask value for read and write (only low bits are enabled)
  * @return	Nothing
- * @note	Controls which bits corresponding to PIO0_n are active in the P0MPORT
- * register (bit 0 = PIO0_0, bit 1 = PIO0_1, ..., bit 17 = PIO0_17).
+ * @note	Controls which bits are set or unset when using the masked
+ * GPIO read and write functions. A low state indicates the pin is settable
+ * and readable via the masked write and read functions.
  */
-STATIC INLINE void Chip_GPIO_SetPortMask(LPC_GPIO_T *pGPIO, uint32_t port, uint32_t mask)
+STATIC INLINE void Chip_GPIO_SetPortMask(LPC_GPIO_T *pGPIO, uint8_t port, uint32_t mask)
 {
 	pGPIO->MASK[port] = mask;
 }
@@ -277,8 +278,10 @@ STATIC INLINE void Chip_GPIO_SetPortMask(LPC_GPIO_T *pGPIO, uint32_t port, uint3
 /**
  * @brief	Get GPIO port mask value used for GPIO masked read and write
  * @param	pGPIO	: The base of GPIO peripheral on the chip
- * @param	port	: GPIO Port number where @a pin is located
+ * @param	port	: port Number
  * @return	Returns value set with the Chip_GPIO_SetPortMask() function.
+ * @note	A high bit in the return value indicates that that GPIO pin for the
+ * port cannot be set using the masked write function.
  */
 STATIC INLINE uint32_t Chip_GPIO_GetPortMask(LPC_GPIO_T *pGPIO, uint8_t port)
 {

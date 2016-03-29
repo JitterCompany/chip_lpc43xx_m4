@@ -74,7 +74,7 @@ typedef struct {							/*!< (@ 0x40050000) CGU Structure          */
 	__IO uint32_t  IDIV_CTRL[CLK_IDIV_LAST];/*!< (@ 0x40050048) Integer divider A-E control registers */
 	__IO uint32_t  BASE_CLK[CLK_BASE_LAST];	/*!< (@ 0x4005005C) Start of base clock registers */
 } LPC_CGU_T;
-    
+
 /**
  * @brief CCU clock config/status register pair
  */

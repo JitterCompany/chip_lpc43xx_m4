@@ -222,10 +222,17 @@ void Chip_CCAN_ClearStatus(LPC_CCAN_T *pCCAN, uint32_t val);
  * @param	pCCAN	: The base of CCAN peripheral on the chip
  * @param	dir	: direction
  * @return	Current value of the transmit/receive error counter
+ * @note	When @a dir is #CCAN_RX_DIR, then MSB (bit-7) indicates the
+ * receiver error passive level, if the bit is High(1) then the reciever
+ * counter has reached error passive level as specified in CAN2.0
+ * specification; else if the bit is Low(0) it indicates that the
+ * error counter is below the passive level. Bits from (bit6-0) has
+ * the actual error count. When @a dir is #CCAN_TX_DIR, the complete
+ * 8-bits indicates the number of tx errors.
  */
 STATIC INLINE uint8_t Chip_CCAN_GetErrCounter(LPC_CCAN_T *pCCAN, CCAN_TRANSFER_DIR_T dir)
 {
-	return (dir == CCAN_TX_DIR) ? (pCCAN->EC & 0x0FF) : ((pCCAN->EC >> 8) & 0x0FF);	/* TODO: Confirm bit number of TEC_7_0 and REC_6_0 */
+	return (dir == CCAN_TX_DIR) ? (pCCAN->EC & 0x0FF) : ((pCCAN->EC >> 8) & 0x0FF);
 }
 
 /**

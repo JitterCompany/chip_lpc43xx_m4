@@ -37,8 +37,8 @@
 extern "C" {
 #endif
 
-/** @defgroup I2C_18XX_43XX CHIP: LPC18xx/43xx I2C driver
- * @ingroup CHIP_18XX_43XX_Drivers
+/**
+ * @ingroup I2C_18XX_43XX
  * @{
  */
 

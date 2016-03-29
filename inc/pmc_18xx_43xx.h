@@ -52,10 +52,19 @@ typedef struct {						/*!< PMC Structure          */
 
 /**
  * @brief Power Management Controller power modes
+ * Setting this mode will not make IO loose the state
  */
-#define PMC_PWR_DEEP_SLEEP_MODE         0x3F00AA
-#define PMC_PWR_POWER_DOWN_MODE         0x3FFCBA
-#define PMC_PWR_DEEP_POWER_DOWN_MODE    0x3FFF7F
+#define PMC_PWR_DEEP_SLEEP_MODE         0x3000AA
+#define PMC_PWR_POWER_DOWN_MODE         0x30FCBA
+#define PMC_PWR_DEEP_POWER_DOWN_MODE    0x30FF7F
+
+/**
+ * @brief Power Management Controller power modes (IO powerdown)
+ * Setting this mode will make the IO loose the state
+ */
+#define PMC_PWR_DEEP_SLEEP_MODE_NO_IO         0x3F00AA
+#define PMC_PWR_POWER_DOWN_MODE_NO_IO         0x3FFCBA
+#define PMC_PWR_DEEP_POWER_DOWN_MODE_NO_IO    0x3FFF7F
 
 /*
  * @brief PMC power states

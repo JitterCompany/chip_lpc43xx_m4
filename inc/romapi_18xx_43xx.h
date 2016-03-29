@@ -32,6 +32,7 @@
 #ifndef __ROMAPI_18XX_43XX_H_
 #define __ROMAPI_18XX_43XX_H_
 
+#include "iap_18xx_43xx.h"
 #include "error.h"
 
 #ifdef __cplusplus
@@ -93,6 +94,28 @@ typedef struct {
 	const uint32_t endMarker;				/*!< API table end marker = 0x87654321 */
 
 } LPC_ROM_API_T;
+
+/* Pointer to ROM API function address */
+#define LPC_ROM_API_BASE_LOC    0x10400100
+#define LPC_ROM_API ((LPC_ROM_API_T *) LPC_ROM_API_BASE)
+
+/* Pointer to ROM IAP entry functions */
+#define IAP_ENTRY_LOCATION        (*((uint32_t *) 0x10400100))
+
+/**
+ * @brief IAP flash bank definitions
+ */
+#define IAP_FLASH_BANK_A                        0
+#define IAP_FLASH_BANK_B                        1
+
+/**
+ * @}
+ */
+
+static INLINE void iap_entry(unsigned int cmd_param[], unsigned int status_result[])
+{
+	((IAP_ENTRY_T) IAP_ENTRY_LOCATION)(cmd_param, status_result);
+}
 
 /**
  * @}

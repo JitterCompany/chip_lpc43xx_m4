@@ -103,7 +103,7 @@ STATIC uint32_t getColsLen(uint32_t DynConfig)
 void initDynMem(LPC_EMC_T *pEMC, IP_EMC_DYN_CONFIG_T *Dynamic_Config, uint32_t EMC_Clock)
 {
 	uint32_t ChipSelect, tmpclk;
-	int i;
+	volatile int i;
 
 	for (ChipSelect = 0; ChipSelect < 4; ChipSelect++) {
 		LPC_EMC_T *EMC_Reg_add = (LPC_EMC_T *) ((uint32_t) pEMC + (ChipSelect << 5));
@@ -127,20 +127,15 @@ void initDynMem(LPC_EMC_T *pEMC, IP_EMC_DYN_CONFIG_T *Dynamic_Config, uint32_t E
 	pEMC->DYNAMICRRD        = convertTimmingParam(EMC_Clock, Dynamic_Config->tRRD, 1);
 	pEMC->DYNAMICMRD        = convertTimmingParam(EMC_Clock, Dynamic_Config->tMRD, 1);
 
-	/* TIM_Waitus(100); */
-	/*FIXME: if Timer driver is ready, it should replace below "for" delay technic */
 	for (i = 0; i < 1000; i++) {	/* wait 100us */
 	}
 	pEMC->DYNAMICCONTROL    = 0x00000183;	/* Issue NOP command */
 
-	/* TIM_Waitus(200); */						   /* wait 200us */
-	/*FIXME: if Timer driver is ready, it should replace below "for" delay technic */
 	for (i = 0; i < 1000; i++) {}
 	pEMC->DYNAMICCONTROL    = 0x00000103;	/* Issue PALL command */
 
 	pEMC->DYNAMICREFRESH = 2;	/* ( 2 * 16 ) -> 32 clock cycles */
 
-	/* FIXME: TIM_Waitus(200); */						   /* wait 200us */
 	for (i = 0; i < 80; i++) {}
 
 	tmpclk = EMC_DIV_ROUND_UP(convertTimmingParam(EMC_Clock, Dynamic_Config->RefreshPeriod, 0), 16);
@@ -165,7 +160,21 @@ void initDynMem(LPC_EMC_T *pEMC, IP_EMC_DYN_CONFIG_T *Dynamic_Config, uint32_t E
 			/*burst_length = 4;*/
 			Col_len += 1;
 		}
+
+		/* Check for RBC mode */
+		if (!(Dynamic_Config->DevConfig[ChipSelect].DynConfig & EMC_DYN_CONFIG_LPSDRAM)) {
+			if (!(Dynamic_Config->DevConfig[ChipSelect].DynConfig & (0x7 << EMC_DYN_CONFIG_DEV_SIZE_BIT))) {
+				/* 2 banks => 1 bank select bit */
+				Col_len += 1;
+			}
+			else {
+				/* 4 banks => 2 bank select bits */
+				Col_len += 2;
+			}
+		}
+
 		DynAddr = Dynamic_Config->DevConfig[ChipSelect].BaseAddr;
+
 
 		if (DynAddr != 0) {
 			uint32_t temp;
