@@ -796,7 +796,6 @@ void Chip_Clock_SetupPLL(CHIP_CGU_CLKIN_T Input, CHIP_CGU_USB_AUDIO_PLL_T pllnum
 	uint32_t reg = pPLLSetup->ctrl | (Input << 24);
 
 	/* Setup from passed values */
-	LPC_CGU->PLL[pllnum].PLL_CTRL = reg;
 	LPC_CGU->PLL[pllnum].PLL_MDIV = pPLLSetup->mdiv;
 	LPC_CGU->PLL[pllnum].PLL_NP_DIV = pPLLSetup->ndiv;
 
@@ -805,6 +804,7 @@ void Chip_Clock_SetupPLL(CHIP_CGU_CLKIN_T Input, CHIP_CGU_USB_AUDIO_PLL_T pllnum
 		LPC_CGU->PLL0AUDIO_FRAC = pPLLSetup->fract;
 	}
 	audio_usb_pll_freq[pllnum] = pPLLSetup->freq;
+	LPC_CGU->PLL[pllnum].PLL_CTRL = reg;
 }
 
 /* Enables the audio or USB PLL */
