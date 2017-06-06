@@ -30,6 +30,7 @@
  */
 
 #include "chip.h"
+#include "sdmmc_clock_divide.h"
 #include "string.h"
 
 /*****************************************************************************
@@ -129,8 +130,7 @@ void Chip_SDIF_SetClock(LPC_SDMMC_T *pSDMMC, uint32_t clk_rate, uint32_t speed)
 {
 	/* compute SD/MMC clock dividers */
 	uint32_t div;
-
-	div = ((clk_rate / speed) + 2) >> 1;
+    div = sdmmc_clock_divide_calc(clk_rate, speed);
 
 	if ((div == pSDMMC->CLKDIV) && pSDMMC->CLKENA) {
 		return;	/* Closest speed is already set */
