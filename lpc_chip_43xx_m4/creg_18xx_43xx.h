@@ -53,7 +53,7 @@ typedef struct {						/*!< CREG Structure         */
 	__I  uint32_t  RESERVED2[5];
 #else
 	__I  uint32_t  RESERVED2;
-	__I  uint32_t  CREG1;				/*!< Configuration Register 1 */
+	__IO uint32_t  CREG1;				/*!< Configuration Register 1 */
 	__I  uint32_t  CREG2;				/*!< Configuration Register 2 */
 	__I  uint32_t  CREG3;				/*!< Configuration Register 3 */
 	__I  uint32_t  CREG4;				/*!< Configuration Register 4 */
@@ -224,6 +224,42 @@ STATIC INLINE void Chip_CREG_ClearM0AppEvent(void)
 STATIC INLINE void Chip_CREG_ClearM0SubEvent(void)
 {
 	LPC_CREG->M0SUBTXEVENT = 0;
+}
+
+/**
+ * @brief	Set USB0_PHY_PWREN_LP to power USB0 Phy in sleep mode
+ * @return	Nothing
+ */
+STATIC INLINE void Chip_CREG_SetUSB0_PHY_PWREN_LP(void)
+{
+	LPC_CREG->CREG1 |= (1 << 9);
+}
+
+/**
+ * @brief	Clear USB0_PHY_PWREN_LP
+ * @return	Nothing
+ */
+STATIC INLINE void Chip_CREG_ClearUSB0_PHY_PWREN_LP(void)
+{
+	LPC_CREG->CREG1 &= ~(1 << 9);
+}
+
+/**
+ * @brief	Set USB1_PHY_PWREN_LP to power USB1 Phy in sleep mode
+ * @return	Nothing
+ */
+STATIC INLINE void Chip_CREG_SetUSB1_PHY_PWREN_LP(void)
+{
+	LPC_CREG->CREG1 |= (1 << 10);
+}
+
+/**
+ * @brief	Clear USB1_PHY_PWREN_LP
+ * @return	Nothing
+ */
+STATIC INLINE void Chip_CREG_ClearUSB1_PHY_PWREN_LP(void)
+{
+	LPC_CREG->CREG1 &= ~(1 << 10);
 }
 #endif
 
