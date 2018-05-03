@@ -321,6 +321,62 @@ int32_t Chip_SDMMC_GetState(LPC_SDMMC_T *pSDMMC)
 	return (int32_t) R1_CURRENT_STATE(g_card_info->card_info.response[0]);
 }
 
+
+
+
+/**
+ * Try to fix an sdcard that fails to enumerate properly.
+ * So far this has fixed some toshiba 8Gb microsd cards that would otherwise
+ * fail every other enumeration (CMD8 pattern mismatch)
+ *
+ * This command sequence is found by trial and error, it does not make sense
+ * if you compare it with the spec.
+ *
+ * It is basically:
+ * CMD0: idle
+ * ACMD41 (arg 0): read OCR
+ * ACMD41 (two retries): set OCR (without claiming to be HC compatible)
+ * CMD0: idle again
+ */
+static void magic_sdcard_fix(LPC_SDMMC_T *pSDMMC)
+{
+	int32_t status;
+	uint32_t ocr = OCR_VOLTAGE_RANGE_MSK;
+
+	/* clear card type */
+	Chip_SDIF_SetCardType(pSDMMC, 0);
+
+    // Overruled to ENUM_CLOCK
+	g_card_info->card_info.speed = SD_MMC_ENUM_CLOCK;
+
+    // CMD0: idle
+    status = sdmmc_execute_command(pSDMMC, CMD_IDLE, 0, MCI_INT_CMD_DONE);
+
+    // assume SD card
+    g_card_info->card_info.card_type |= CARD_TYPE_SD;
+
+    // ACMD41: get OCR
+    status = sdmmc_execute_command(pSDMMC, CMD_SD_OP_COND, 0, 0);
+    ocr = g_card_info->card_info.response[0] & OCR_VOLTAGE_RANGE_MSK;
+
+    // n * ACMD41: start initializing card as if we are a non-HC host?
+    // this somehow fixes the card??
+    for(size_t tries=0;tries<2;tries++) {
+        g_card_info->card_info.msdelay_func(MS_ACQUIRE_DELAY);
+        status = sdmmc_execute_command(pSDMMC, CMD_SD_OP_COND, ocr, 0);
+        if(g_card_info->card_info.response[0] & OCR_ALL_READY) {
+            break;
+        }
+    }
+
+    // CMD0: send idle again to make the card ready to start a
+    // new enumeration.
+	sdmmc_execute_command(pSDMMC, CMD_IDLE, 0, MCI_INT_CMD_DONE);
+}
+
+
+
+
 /* Function to enumerate the SD/MMC/SDHC/MMC+ cards */
 uint32_t Chip_SDMMC_Acquire(LPC_SDMMC_T *pSDMMC, mci_card_struct *pcardinfo)
 {
@@ -350,7 +406,19 @@ uint32_t Chip_SDMMC_Acquire(LPC_SDMMC_T *pSDMMC, mci_card_struct *pcardinfo)
 				/* check response has same echo pattern */
 				if ((g_card_info->card_info.response[0] & SD_SEND_IF_ECHO_MSK) == SD_SEND_IF_RESP) {
 					ocr |= OCR_HC_CCS;
-				}
+
+                // pattern mismatch: try to fix it
+				} else if (!(status & SD_INT_ERROR)) {
+                    if(!tries) {
+                        tries++;
+                        // may be fixed by magic_sdcard_fix (but why??)
+                        magic_sdcard_fix(pSDMMC);
+                        break;
+                    }
+                    // magic_sdcard_fix did not help. enumaration failed.
+                    state = 100;
+                    break;
+                }
 			}
 
 			++state;
