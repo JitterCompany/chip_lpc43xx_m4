@@ -452,6 +452,13 @@ void Chip_SDIF_GetResponse(LPC_SDMMC_T *pSDMMC, uint32_t *resp);
 void Chip_SDIF_SetClock(LPC_SDMMC_T *pSDMMC, uint32_t clk_rate, uint32_t speed);
 
 /**
+ * @brief   Enable low-power clock. Clock is stopped when card is IDLE.
+ *
+ * @param	pSDMMC	: SDMMC peripheral selected
+ */
+void Chip_SDIF_EnableLowPowerClock(LPC_SDMMC_T *pSDMMC);
+
+/**
  * @brief	Function to clear interrupt & FIFOs
  * @param	pSDMMC	: SDMMC peripheral selected
  * @return	None

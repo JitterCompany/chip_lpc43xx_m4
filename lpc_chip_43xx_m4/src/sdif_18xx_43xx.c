@@ -136,6 +136,9 @@ void Chip_SDIF_SetClock(LPC_SDMMC_T *pSDMMC, uint32_t clk_rate, uint32_t speed)
 		return;	/* Closest speed is already set */
 
 	}
+
+    const bool low_power = (pSDMMC->CLKENA & MCI_CLKEN_LOW_PWR);
+
 	/* disable clock */
 	pSDMMC->CLKENA = 0;
 
@@ -153,9 +156,17 @@ void Chip_SDIF_SetClock(LPC_SDMMC_T *pSDMMC, uint32_t clk_rate, uint32_t speed)
 
 	/* enable clock */
 	pSDMMC->CLKENA = MCI_CLKEN_ENABLE;
+    if(low_power) {
+        pSDMMC->CLKENA|= MCI_CLKEN_LOW_PWR;
+    }
 
 	/* inform CIU */
 	Chip_SDIF_SendCmd(pSDMMC, MCI_CMD_UPD_CLK | MCI_CMD_PRV_DAT_WAIT, 0);
+}
+
+void Chip_SDIF_EnableLowPowerClock(LPC_SDMMC_T *pSDMMC)
+{
+	pSDMMC->CLKENA|= MCI_CLKEN_LOW_PWR;
 }
 
 /* Function to clear interrupt & FIFOs */
