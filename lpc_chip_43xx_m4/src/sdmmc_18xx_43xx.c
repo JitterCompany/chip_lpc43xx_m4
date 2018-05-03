@@ -75,7 +75,10 @@ static int32_t sdmmc_execute_command(LPC_SDMMC_T *pSDMMC, uint32_t cmd, uint32_t
 	}
 
 	while (step) {
-		Chip_SDIF_SetClock(pSDMMC, Chip_Clock_GetBaseClocktHz(CLK_BASE_SDIO), g_card_info->card_info.speed);
+        // use speed setting from card_info, unless this is a low-speed command
+        // (during enumeration, speed should be limited to 400kHz)
+		Chip_SDIF_SetClock(pSDMMC, Chip_Clock_GetBaseClocktHz(CLK_BASE_SDIO),
+                (cmd & CMD_BIT_LS) ? SD_MMC_ENUM_CLOCK : g_card_info->card_info.speed);
 
 		/* Clear the interrupts */
 		Chip_SDIF_ClrIntStatus(pSDMMC, 0xFFFFFFFF);
