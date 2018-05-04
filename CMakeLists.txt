@@ -37,6 +37,9 @@ CPM_InitModule(${CPM_MODULE_NAME})
 # Project sources / settings
 #-----------------------------------------------------------------------
 
+# linking against multiple different versions of this library is not a good idea
+CPM_ForceOnlyOneModuleVersion()
+
 file(GLOB SOURCES 
     "lpc_chip_43xx_m4/src/*.c"
     )
