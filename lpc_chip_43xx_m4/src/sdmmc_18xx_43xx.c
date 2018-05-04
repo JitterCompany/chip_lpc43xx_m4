@@ -361,7 +361,7 @@ static void magic_sdcard_fix(LPC_SDMMC_T *pSDMMC)
 
     // n * ACMD41: start initializing card as if we are a non-HC host?
     // this somehow fixes the card??
-    for(size_t tries=0;tries<2;tries++) {
+    for(size_t tries=0;tries<20;tries++) {
         g_card_info->card_info.msdelay_func(MS_ACQUIRE_DELAY);
         status = sdmmc_execute_command(pSDMMC, CMD_SD_OP_COND, ocr, 0);
         if(g_card_info->card_info.response[0] & OCR_ALL_READY) {
