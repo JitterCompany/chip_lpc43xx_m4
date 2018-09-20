@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.0 FATAL_ERROR)
 
 
-set(CPM_MODULE_NAME lpc_chip_43xx_m4)
+set(CPM_MODULE_NAME chip_lpc43xx_m4)
 
 #-----------------------------------------------------------------------
 # Required CPM Setup - no need to modify - See: https://github.com/iauns/cpm
@@ -41,10 +41,10 @@ CPM_InitModule(${CPM_MODULE_NAME})
 CPM_ForceOnlyOneModuleVersion()
 
 file(GLOB SOURCES 
-    "lpc_chip_43xx_m4/src/*.c"
+    "chip_lpc43xx_m4/src/*.c"
     )
-include_directories("lpc_chip_43xx_m4")
-CPM_ExportAdditionalIncludeDir("lpc_chip_43xx_m4")
+include_directories("chip_lpc43xx_m4")
+CPM_ExportAdditionalIncludeDir("chip_lpc43xx_m4")
 
 set_property(GLOBAL PROPERTY test_prop "Hello World from chip (property)")
 add_library(${CPM_LIB_TARGET_NAME} ${SOURCES})

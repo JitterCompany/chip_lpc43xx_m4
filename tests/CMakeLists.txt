@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5.0 FATAL_ERROR)
 
 project(tests)
 
-set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/../lpc_chip_43xx_m4/src)
+set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/../chip_lpc43xx_m4/src)
 
 include(${CMAKE_SOURCE_DIR}/CPM_setup.cmake)
 
