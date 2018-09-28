@@ -46,7 +46,6 @@ file(GLOB SOURCES
 include_directories("chip_lpc43xx_m4")
 CPM_ExportAdditionalIncludeDir("chip_lpc43xx_m4")
 
-set_property(GLOBAL PROPERTY test_prop "Hello World from chip (property)")
 add_library(${CPM_LIB_TARGET_NAME} ${SOURCES})
 target_link_libraries(${CPM_LIB_TARGET_NAME} ${CPM_LIBRARIES})
 
