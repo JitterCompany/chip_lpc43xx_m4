@@ -51,17 +51,39 @@ STATIC void setClkDiv(LPC_EEPROM_T *pEEPROM)
 	/* Setup EEPROM timing to 375KHz based on PCLK rate */
 	clk = Chip_Clock_GetRate(CLK_MX_EEPROM);
 
-	/* Set EEPROM clock divide value*/
-	pEEPROM->CLKDIV = clk / EEPROM_CLOCK_DIV - 1;
+	// Set Conservative EEPROM clock divide value
+    // Note: CLKDIV is -1 encoded, but the division also rounds down
+	pEEPROM->CLKDIV = clk / EEPROM_CLOCK_DIV;
 }
 
+// These are the minimum wait states for EEPROM in nanoseconds.
+// Note: these constants originate from datasheet LPC435X/3X/2X/1X/1X,
+// Chapter 11.1, Table 16: EEPROM characteristics, t_wait
+enum EEPROMWaitState {
+    TRPHASE1_NS = 70,
+    TRPHASE2_NS = 35,
+    TPHASE1_NS = 20,
+    TPHASE2_NS = 40,
+    TPHASE3_NS = 10,
+};
 /* Setup EEPROM clock */
 STATIC INLINE void setWaitState(LPC_EEPROM_T *pEEPROM)
 {
-	/* Setup EEPROM wait states*/
-	Chip_EEPROM_SetReadWaitState(pEEPROM, EEPROM_READ_WAIT_STATE_VAL);
-	Chip_EEPROM_SetWaitState(pEEPROM, EEPROM_WAIT_STATE_VAL);
+    const uint32_t CLK_MHZ = Chip_Clock_GetRate(CLK_MX_EEPROM) / 1000000;
 
+    // Note: the division rounds down, which means the calculated wait states
+    // are 1 lower than required. Conveniently, the registers are -1 encoded,
+    // so we don't need to compensate.
+    const uint8_t RPHASE1 = (TRPHASE1_NS * CLK_MHZ) / 1000;
+    const uint8_t RPHASE2 = (TRPHASE2_NS * CLK_MHZ) / 1000;
+
+    const uint8_t PHASE1 = (TPHASE1_NS * CLK_MHZ) / 1000;
+    const uint8_t PHASE2 = (TPHASE2_NS * CLK_MHZ) / 1000;
+    const uint8_t PHASE3 = (TPHASE3_NS * CLK_MHZ) / 1000;
+
+	// Setup EEPROM wait states
+	Chip_EEPROM_SetReadWaitState(LPC_EEPROM, ((RPHASE1 << 8) | RPHASE2));
+	Chip_EEPROM_SetWaitState(LPC_EEPROM, ((PHASE1 << 16) | (PHASE2 << 8) | PHASE3));
 }
 
 /*****************************************************************************
@@ -71,10 +93,9 @@ STATIC INLINE void setWaitState(LPC_EEPROM_T *pEEPROM)
 /* Initializes the EEPROM peripheral with specified parameter */
 void Chip_EEPROM_Init(LPC_EEPROM_T *pEEPROM)
 {
-	/* Disable EEPROM power down mode */
-	Chip_EEPROM_DisablePowerDown(pEEPROM);
 	setClkDiv(pEEPROM);
 	setWaitState(pEEPROM);
+	Chip_EEPROM_DisablePowerDown(pEEPROM);
 }
 
 /* Write data from page register to non-volatile memory */

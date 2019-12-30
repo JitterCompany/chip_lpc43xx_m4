@@ -51,8 +51,6 @@ extern "C" {
 /** Get the eeprom address */
 #define EEPROM_ADDRESS(page, offset)     (EEPROM_START + (EEPROM_PAGE_SIZE * (page)) + offset)
 #define EEPROM_CLOCK_DIV                 1500000
-#define EEPROM_READ_WAIT_STATE_VAL       0x58
-#define EEPROM_WAIT_STATE_VAL            0x232
 
 /**
  * @brief EEPROM register block structure
